@@ -1,0 +1,9 @@
+version: "1.0.0"
+license: "GPL-3.0"
+url: "https://github.com/Llgok/radiolib_cpp_bus_driver.git"
+
+dependencies:
+  idf: ">=5.5"
+
+  jgromes/radiolib:
+    version: "^7.6.0"
