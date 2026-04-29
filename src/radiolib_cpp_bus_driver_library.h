@@ -21,8 +21,9 @@ class RadiolibCppBusDriverHal : public RadioLibHal {
       std::shared_ptr<cpp_bus_driver::BusSpiGuide> bus, int32_t freq_hz = -1,
       int32_t cs = -1)
       : RadioLibHal(
-            static_cast<uint32_t>(cpp_bus_driver::Tool::PinMode::kInput),
-            static_cast<uint32_t>(cpp_bus_driver::Tool::PinMode::kOutput), 0, 1,
+            static_cast<uint32_t>(cpp_bus_driver::Tool::GpioMode::kInput),
+            static_cast<uint32_t>(cpp_bus_driver::Tool::GpioMode::kOutput), 0,
+            1,
             static_cast<uint32_t>(cpp_bus_driver::Tool::InterruptMode::kRising),
             static_cast<uint32_t>(
                 cpp_bus_driver::Tool::InterruptMode::kFalling)),
@@ -34,8 +35,8 @@ class RadiolibCppBusDriverHal : public RadioLibHal {
   void pinMode(uint32_t pin, uint32_t mode) override;
   void digitalWrite(uint32_t pin, uint32_t value) override;
   uint32_t digitalRead(uint32_t pin) override;
-  void attachInterrupt(uint32_t interruptNum, void (*interruptCb)(void),
-                       uint32_t mode) override;
+  void attachInterrupt(
+      uint32_t interruptNum, void (*interruptCb)(void), uint32_t mode) override;
   void detachInterrupt(uint32_t interruptNum) override;
   void delay(RadioLibTime_t ms) override;
   void delayMicroseconds(RadioLibTime_t us) override;

@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2025-07-31 16:06:23
- * @LastEditTime: 2026-04-24 16:37:36
+ * @LastEditTime: 2026-04-29 10:25:34
  * @License: GPL 3.0
  */
 #include "radiolib_cpp_bus_driver_library.h"
@@ -23,20 +23,20 @@ static void IRAM_ATTR InterruptCallbackTemplate(void* arg) {
 void inline RadiolibCppBusDriverHal::pinMode(uint32_t pin, uint32_t mode) {
   if (pin == RADIOLIB_NC) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
-                     "Invalid argument\n");
+        "Invalid argument\n");
     return;
   }
-  bus_->SetPinMode(pin, static_cast<cpp_bus_driver::Tool::PinMode>(mode));
+  bus_->SetGpioMode(pin, static_cast<cpp_bus_driver::Tool::GpioMode>(mode));
 }
 
-void inline RadiolibCppBusDriverHal::digitalWrite(uint32_t pin,
-                                                  uint32_t value) {
+void inline RadiolibCppBusDriverHal::digitalWrite(
+    uint32_t pin, uint32_t value) {
   if (pin == RADIOLIB_NC) {
     // bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__,
     // __LINE__, "Invalid argument\n");
     return;
   }
-  bus_->PinWrite(pin, value);
+  bus_->GpioWrite(pin, value);
 }
 
 uint32_t inline RadiolibCppBusDriverHal::digitalRead(uint32_t pin) {
@@ -45,38 +45,37 @@ uint32_t inline RadiolibCppBusDriverHal::digitalRead(uint32_t pin) {
     // __LINE__, "Invalid argument\n");
     return 0;
   }
-  return bus_->PinRead(pin);
+  return bus_->GpioRead(pin);
 }
 
-void inline RadiolibCppBusDriverHal::attachInterrupt(uint32_t interruptNum,
-                                                     void (*interruptCb)(void),
-                                                     uint32_t mode) {
+void inline RadiolibCppBusDriverHal::attachInterrupt(
+    uint32_t interruptNum, void (*interruptCb)(void), uint32_t mode) {
   if (interruptNum == RADIOLIB_NC) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
-                     "Invalid argument\n");
+        "Invalid argument\n");
     return;
   }
 
   auto arg = std::make_unique<InterruptArg>(interruptCb);
   g_interrupt_map[interruptNum] = std::move(arg);
 
-  if (!bus_->InitGpioInterrupt(
-          interruptNum, static_cast<cpp_bus_driver::Tool::InterruptMode>(mode),
+  if (!bus_->InitGpioInterrupt(interruptNum,
+          static_cast<cpp_bus_driver::Tool::InterruptMode>(mode),
           InterruptCallbackTemplate, g_interrupt_map[interruptNum].get())) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
-                     "InitGpioInterrupt fail\n");
+        "InitGpioInterrupt fail\n");
   }
 }
 
 void inline RadiolibCppBusDriverHal::detachInterrupt(uint32_t interruptNum) {
   if (interruptNum == RADIOLIB_NC) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
-                     "Invalid argument\n");
+        "Invalid argument\n");
     return;
   }
   if (!bus_->DeinitGpioInterrupt(interruptNum)) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
-                     "DeleteGpioInterrupt fail\n");
+        "DeleteGpioInterrupt fail\n");
   }
 }
 
@@ -96,19 +95,19 @@ RadioLibTime_t inline RadiolibCppBusDriverHal::micros() {
   return bus_->GetSystemTimeUs();
 }
 
-long inline RadiolibCppBusDriverHal::pulseIn(uint32_t pin, uint32_t state,
-                                             RadioLibTime_t timeout) {
+long inline RadiolibCppBusDriverHal::pulseIn(
+    uint32_t pin, uint32_t state, RadioLibTime_t timeout) {
   if (pin == RADIOLIB_NC) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
-                     "Invalid argument\n");
+        "Invalid argument\n");
     return 0;
   }
 
-  bus_->SetPinMode(pin, cpp_bus_driver::Tool::PinMode::kInput);
+  bus_->SetGpioMode(pin, cpp_bus_driver::Tool::GpioMode::kInput);
   uint32_t start = bus_->GetSystemTimeUs();
   uint32_t curtick = bus_->GetSystemTimeUs();
 
-  while (bus_->PinRead(pin) == state) {
+  while (bus_->GpioRead(pin) == state) {
     if ((bus_->GetSystemTimeUs() - curtick) > timeout) {
       return 0;
     }
@@ -120,17 +119,17 @@ long inline RadiolibCppBusDriverHal::pulseIn(uint32_t pin, uint32_t state,
 void inline RadiolibCppBusDriverHal::spiBegin() {
   if (!bus_->Init(_freq_hz, _cs)) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
-                     "Init fail\n");
+        "Init fail\n");
   }
 }
 
 void inline RadiolibCppBusDriverHal::spiBeginTransaction() { return; }
 
-void RadiolibCppBusDriverHal::spiTransfer(uint8_t* out, size_t len,
-                                          uint8_t* in) {
+void RadiolibCppBusDriverHal::spiTransfer(
+    uint8_t* out, size_t len, uint8_t* in) {
   if (!bus_->WriteRead(out, in, len)) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
-                     "WriteRead fail\n");
+        "WriteRead fail\n");
   }
 }
 
@@ -141,7 +140,7 @@ void inline RadiolibCppBusDriverHal::spiEnd() { return; }
 void RadiolibCppBusDriverHal::init() {
   if (!bus_->Init(_freq_hz, _cs)) {
     bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
-                     "Init fail\n");
+        "Init fail\n");
   }
 }
 
