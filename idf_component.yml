@@ -1,6 +1,6 @@
 version: "2.0.0"
 license: "GPL-3.0"
-url: "https://github.com/Llgok/radiolib_cpp_bus_driver.git"
+url: https://github.com/Llgok/radiolib_cpp_bus_driver
 
 dependencies:
   idf: ">=5.5.3"
