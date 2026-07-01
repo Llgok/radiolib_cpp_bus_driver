@@ -22,7 +22,7 @@ static void IRAM_ATTR InterruptCallbackTemplate(void* arg) {
 
 void inline RadiolibCppBusDriverHal::pinMode(uint32_t pin, uint32_t mode) {
   if (pin == RADIOLIB_NC) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__, __LINE__,
         "Invalid argument\n");
     return;
   }
@@ -32,7 +32,7 @@ void inline RadiolibCppBusDriverHal::pinMode(uint32_t pin, uint32_t mode) {
 void inline RadiolibCppBusDriverHal::digitalWrite(
     uint32_t pin, uint32_t value) {
   if (pin == RADIOLIB_NC) {
-    // bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__,
+    // bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__,
     // __LINE__, "Invalid argument\n");
     return;
   }
@@ -41,7 +41,7 @@ void inline RadiolibCppBusDriverHal::digitalWrite(
 
 uint32_t inline RadiolibCppBusDriverHal::digitalRead(uint32_t pin) {
   if (pin == RADIOLIB_NC) {
-    // bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__,
+    // bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__,
     // __LINE__, "Invalid argument\n");
     return 0;
   }
@@ -51,7 +51,7 @@ uint32_t inline RadiolibCppBusDriverHal::digitalRead(uint32_t pin) {
 void inline RadiolibCppBusDriverHal::attachInterrupt(
     uint32_t interruptNum, void (*interruptCb)(void), uint32_t mode) {
   if (interruptNum == RADIOLIB_NC) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__, __LINE__,
         "Invalid argument\n");
     return;
   }
@@ -62,19 +62,19 @@ void inline RadiolibCppBusDriverHal::attachInterrupt(
   if (!bus_->InitGpioInterrupt(interruptNum,
           static_cast<cpp_bus_driver::Tool::InterruptMode>(mode),
           InterruptCallbackTemplate, g_interrupt_map[interruptNum].get())) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kError, __FILE__, __LINE__,
         "InitGpioInterrupt fail\n");
   }
 }
 
 void inline RadiolibCppBusDriverHal::detachInterrupt(uint32_t interruptNum) {
   if (interruptNum == RADIOLIB_NC) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__, __LINE__,
         "Invalid argument\n");
     return;
   }
   if (!bus_->DeinitGpioInterrupt(interruptNum)) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kError, __FILE__, __LINE__,
         "DeleteGpioInterrupt fail\n");
   }
 }
@@ -98,7 +98,7 @@ RadioLibTime_t inline RadiolibCppBusDriverHal::micros() {
 long inline RadiolibCppBusDriverHal::pulseIn(
     uint32_t pin, uint32_t state, RadioLibTime_t timeout) {
   if (pin == RADIOLIB_NC) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kInfo, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kWarning, __FILE__, __LINE__,
         "Invalid argument\n");
     return 0;
   }
@@ -118,7 +118,7 @@ long inline RadiolibCppBusDriverHal::pulseIn(
 
 void inline RadiolibCppBusDriverHal::spiBegin() {
   if (!bus_->Init(_freq_hz, _cs)) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kError, __FILE__, __LINE__,
         "Init fail\n");
   }
 }
@@ -128,7 +128,7 @@ void inline RadiolibCppBusDriverHal::spiBeginTransaction() { return; }
 void RadiolibCppBusDriverHal::spiTransfer(
     uint8_t* out, size_t len, uint8_t* in) {
   if (!bus_->WriteRead(out, in, len)) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kError, __FILE__, __LINE__,
         "WriteRead fail\n");
   }
 }
@@ -139,7 +139,7 @@ void inline RadiolibCppBusDriverHal::spiEnd() { return; }
 
 void RadiolibCppBusDriverHal::init() {
   if (!bus_->Init(_freq_hz, _cs)) {
-    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kBus, __FILE__, __LINE__,
+    bus_->LogMessage(cpp_bus_driver::Tool::LogLevel::kError, __FILE__, __LINE__,
         "Init fail\n");
   }
 }
